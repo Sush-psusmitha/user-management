@@ -80,8 +80,6 @@ function App(){
       
       function updateUser(id){
         const user = users.find((user)=>user.id === id)
-
-
          fetch(`https://jsonplaceholder.typicode.com/users/10`,
             {
                 method: "PUT", 
@@ -99,6 +97,19 @@ function App(){
         
       }
 
+      function DeleteUser(id){
+        fetch(`https://jsonplaceholder.typicode.com/users/${id}`,{
+           method: 'DELETE',
+        })
+        .then((res)=>res.json())
+        .then((data)=>{
+          console.log(data)
+          setUsers((users) => {
+               return users.filter((user)=> user.id !== id)
+          })
+          toast.success("User Deleted Successfully!!")
+        })
+      }
       return(
         <>
            <h1>User Details Management</h1>
@@ -124,8 +135,9 @@ function App(){
                                     <td><EditableText onChange={values => changeHandle(user.id, "website", values)} value={user.website}/></td>
                                     
                                     <td>
-                                    <Button intent="primary" style={{marginRight:5}} onClick={()=> updateUser(user.id)} >Update</Button>
-                                    <Button intent="danger">Delete</Button>
+                                    <Button intent="primary" onClick={()=> updateUser(user.id)} >Update</Button>
+                                    &nbsp;
+                                    <Button intent="danger" onClick={()=>DeleteUser(user.id)}>Delete</Button>
                                     </td>
                                 </tr>
                               )
@@ -145,9 +157,7 @@ function App(){
                                 </td>
                                 <td>
                                     <Button onClick={addUsers} intent="success" style={{width:130}}>Add User</Button>
-                                </td>
-                              
-                                
+                                </td>                                                           
                             </tr>
                         </tfoot>
                   </table>

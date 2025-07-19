@@ -61,12 +61,12 @@ function App() {
   function onChangeHandle(id,key,value){
     setUsers((users)=>{
            users.map(user => {
-                user.id === id ? {...user, [key]:value} : user;
+             return   user.id === id ? {...user, [key]:value} : user;
            } )
     })
   }
 
-  function addUsers(id){
+  function updateUsers(id){
      const user = users.find((user)=> user.id === id); 
 
      fetch(`https://jsonplaceholder.typicode.com/users/10`,{ //must give the id, but we are using fake API in that only 10 data we can modifiy upcoming datas
@@ -86,6 +86,20 @@ function App() {
 
   }
 
+  function deleteUser(id){
+    fetch(`https://jsonplaceholder.typicode.com/users/${id}`,{
+      method: 'DELETE', 
+    })
+    .then((res)=>res.json())
+    .then(data => {
+      console.log(data)
+      setUsers((users) => {
+        return users.filter(user => user.id !== id)
+      })
+      toast.success("User Deleted Successfully!")
+    })
+  }
+
   return (
     <div className="App">
       <table className="bp4-html-table bp4-html-table-bordered bp4-html-table-striped">
@@ -102,8 +116,8 @@ function App() {
               <td><EditableText onChange={value => onChangeHandle(user.id,  "email", value)} value={user.email} /></td>
               <td><EditableText onChange={value => onChangeHandle(user.id, "website", value)} value={user.website} /></td>
               <td>
-                <Button intent="primary" style={{ marginRight: 6 }} onClick={() => addUsers(user.id) }  >Update</Button>
-                <Button intent="danger">Delete</Button>
+                <Button intent="primary" style={{ marginRight: 6 }} onClick={() => updateUsers(user.id) }  >Update</Button>
+                <Button intent="danger" onClick={()=>deleteUser(user.id)}>Delete</Button>
               </td>
             </tr>
           ))}
