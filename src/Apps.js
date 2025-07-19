@@ -71,21 +71,38 @@ function App(){
       }
      
       function changeHandle(id, key, value){
-            setUsers((users) => {
-                users.map(user => {
-                  return  user.id === id ? {...user, [key]:value} : user;
-                })
-            })
+           setUsers((users) =>{
+             return  users.map((user)=> {
+                 return user.id === id ? {...user, [key]:value} : user
+               })
+           })
       }
       
       function updateUser(id){
-         const user = users.find((user)=>{
-           return user.id === id
-         })
+        const user = users.find((user)=>user.id === id)
+
+
+         fetch(`https://jsonplaceholder.typicode.com/users/10`,
+            {
+                method: "PUT", 
+                body: JSON.stringify(user),
+                headers : {
+                    "Content-Type": "application/json; charset=UTF-8"
+                }
+            }
+           )
+           .then((res)=>res.json())
+           .then((data)=> {
+            console.log(data) //shows the data which sent by PUT method
+              toast.success("User Details Updated Successfully!!!"); 
+           })
+        
       }
 
       return(
-            
+        <>
+           <h1>User Details Management</h1>
+            <div className="container">
             <div className="app">
                   <table className="bp4-html-table bp4-html-table-bordered bp4-html-table-striped">
                         <thead>
@@ -104,7 +121,7 @@ function App(){
                                     <td>{user.id}</td>
                                     <td>{user.name}</td>
                                     <td><EditableText onChange={values => changeHandle(user.id, "email", values)} value={user.email}/></td>
-                                    <td><EditableText onChange={values=> changeHandle(user.id, "website", values)} value={user.website}/></td>
+                                    <td><EditableText onChange={values => changeHandle(user.id, "website", values)} value={user.website}/></td>
                                     
                                     <td>
                                     <Button intent="primary" style={{marginRight:5}} onClick={()=> updateUser(user.id)} >Update</Button>
@@ -136,6 +153,8 @@ function App(){
                   </table>
                   <Toaster position="top-center" />
             </div>
+             </div>
+            </>
        )
 
 }

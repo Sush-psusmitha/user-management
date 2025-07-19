@@ -47,8 +47,7 @@ function App() {
         .then((data) => {
           setUsers([...users, data]);
 
-          // ✅ This is the correct way to show a toast with `react-hot-toast`
-          toast.success("User added successfully!");
+         toast.success("User added successfully!");
 
           setNewUser("");
           setNewEmail("");
@@ -57,6 +56,34 @@ function App() {
     } else {
       toast.error("Please fill all the fields!");
     }
+  }
+
+  function onChangeHandle(id,key,value){
+    setUsers((users)=>{
+           users.map(user => {
+                user.id === id ? {...user, [key]:value} : user;
+           } )
+    })
+  }
+
+  function addUsers(id){
+     const user = users.find((user)=> user.id === id); 
+
+     fetch(`https://jsonplaceholder.typicode.com/users/10`,{ //must give the id, but we are using fake API in that only 10 data we can modifiy upcoming datas
+        
+      method: 'PUT', 
+      body: JSON.stringify(user), 
+      headers: {
+        "Content-Type" : "application/json; charset-UTF-8",
+      }
+         
+     })
+     .then((res)=>res.json())
+     .then((data)=>{
+        console.log(data);
+        toast.success("User Details Updated!")
+     })
+
   }
 
   return (
@@ -72,10 +99,10 @@ function App() {
             <tr key={user.id}>
               <td>{user.id}</td>
               <td>{user.name}</td>
-              <td><EditableText value={user.email} /></td>
-              <td><EditableText value={user.website} /></td>
+              <td><EditableText onChange={value => onChangeHandle(user.id,  "email", value)} value={user.email} /></td>
+              <td><EditableText onChange={value => onChangeHandle(user.id, "website", value)} value={user.website} /></td>
               <td>
-                <Button intent="primary" style={{ marginRight: 6 }}>Update</Button>
+                <Button intent="primary" style={{ marginRight: 6 }} onClick={() => addUsers(user.id) }  >Update</Button>
                 <Button intent="danger">Delete</Button>
               </td>
             </tr>
